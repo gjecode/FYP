@@ -1,4 +1,4 @@
 # SMU FYP 
 
 ## Project Description
-FYP Project for SOSD - digitalise and streamline key business processes
+Final Year Project for SOSD - digitalise and streamline key business processes
