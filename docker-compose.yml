@@ -1,0 +1,107 @@
+version: '3.9'
+
+services:
+
+  frontend:
+    mem_limit: 300mb
+    restart: always
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - 5173:5173
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  account:
+    mem_limit: 600mb
+    restart: always
+    container_name: account
+    build:
+      context: ./backend/Account
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Account:/code
+    ports:
+      - 8000:8000
+    env_file:
+      - ./backend/Account/.env
+  
+  dogs:
+    mem_limit: 600mb
+    restart: always
+    container_name: dogs
+    build:
+      context: ./backend/Dogs
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Dogs:/code
+    ports:
+      - 8001:8001
+    env_file:
+      - ./backend/Dogs/.env
+
+  payment:
+    mem_limit: 600mb
+    restart: always
+    container_name: payment
+    build:
+      context: ./backend/Payment
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Payment:/code
+    ports:
+      - 8002:8002
+    env_file:
+      - ./backend/Payment/.env
+  
+  stripe-cli:
+    mem_limit: 300mb
+    restart: always
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    command: listen --api-key ${STRIPE_API_KEY} --forward-to payment:8002/api/payment/webhook/
+
+  email:
+    mem_limit: 600mb
+    restart: always
+    container_name: email
+    build:
+      context: ./backend/Email
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Email:/code
+    ports:
+      - 8005:8005
+    env_file:
+      - ./backend/Email/.env
+
+  walks:
+    mem_limit: 600mb
+    restart: always
+    container_name: walks
+    build:
+      context: ./backend/Walks
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Walks:/code
+    ports:
+      - 8004:8004
+    env_file:
+      - ./backend/Walks/.env
+
+  orchestrator:
+    mem_limit: 600mb
+    restart: always
+    container_name: orchestrator
+    build:
+      context: ./backend/Orchestrator
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/Orchestrator:/code
+    ports:
+      - 8888:8888
+    env_file:
+      - ./backend/Orchestrator/.env
